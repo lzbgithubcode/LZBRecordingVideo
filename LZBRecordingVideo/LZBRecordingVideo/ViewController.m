@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "LZBRecordVideoVC.h"
 
 @interface ViewController ()
 
@@ -31,7 +32,8 @@
 
 - (void)recordingButtonClick
 {
-  
+     LZBRecordVideoVC  *vc = [[LZBRecordVideoVC alloc]init];
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 #pragma mark - lazy
