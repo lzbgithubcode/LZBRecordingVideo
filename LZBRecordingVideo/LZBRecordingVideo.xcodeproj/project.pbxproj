@@ -27,6 +27,7 @@
 		18A2E65A1E62D82C0081DD8B /* room_task_video_start@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A2E6561E62D82C0081DD8B /* room_task_video_start@3x.png */; };
 		18A2E65D1E62D86D0081DD8B /* room_pop_up_lamp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A2E65B1E62D86D0081DD8B /* room_pop_up_lamp@2x.png */; };
 		18A2E65E1E62D86D0081DD8B /* room_pop_up_lamp@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A2E65C1E62D86D0081DD8B /* room_pop_up_lamp@3x.png */; };
+		18A2E6611E62F3640081DD8B /* LZBRecordProcessView.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A2E6601E62F3640081DD8B /* LZBRecordProcessView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,8 @@
 		18A2E6561E62D82C0081DD8B /* room_task_video_start@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "room_task_video_start@3x.png"; sourceTree = "<group>"; };
 		18A2E65B1E62D86D0081DD8B /* room_pop_up_lamp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "room_pop_up_lamp@2x.png"; sourceTree = "<group>"; };
 		18A2E65C1E62D86D0081DD8B /* room_pop_up_lamp@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "room_pop_up_lamp@3x.png"; sourceTree = "<group>"; };
+		18A2E65F1E62F3640081DD8B /* LZBRecordProcessView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZBRecordProcessView.h; sourceTree = "<group>"; };
+		18A2E6601E62F3640081DD8B /* LZBRecordProcessView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LZBRecordProcessView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +186,8 @@
 			children = (
 				187116081E62AF4C00524A3B /* LZBRecordVideoTool.h */,
 				187116091E62AF4C00524A3B /* LZBRecordVideoTool.m */,
+				18A2E65F1E62F3640081DD8B /* LZBRecordProcessView.h */,
+				18A2E6601E62F3640081DD8B /* LZBRecordProcessView.m */,
 			);
 			path = RecordTool;
 			sourceTree = "<group>";
@@ -350,6 +355,7 @@
 			files = (
 				187115DA1E62AAD600524A3B /* ViewController.m in Sources */,
 				187115D71E62AAD600524A3B /* AppDelegate.m in Sources */,
+				18A2E6611E62F3640081DD8B /* LZBRecordProcessView.m in Sources */,
 				1871160D1E62CEA000524A3B /* LZBRecordVideoVC.m in Sources */,
 				187115D41E62AAD600524A3B /* main.m in Sources */,
 				1871160A1E62AF4C00524A3B /* LZBRecordVideoTool.m in Sources */,

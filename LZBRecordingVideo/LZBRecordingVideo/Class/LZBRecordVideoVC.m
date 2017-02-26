@@ -8,6 +8,9 @@
 
 #import "LZBRecordVideoVC.h"
 #import "LZBRecordVideoTool.h"
+#import "LZBRecordProcessView.h"
+
+#define kVideoMaxTime   15.0
 
 @interface LZBRecordVideoVC ()
 
@@ -20,6 +23,11 @@
 
 @property (strong,nonatomic) AVCaptureVideoPreviewLayer *captureVideoPreviewLayer;//相机拍摄预览图层
 @property (nonatomic, strong) LZBRecordVideoTool *videoTool;
+@property (nonatomic, strong) LZBRecordProcessView *progressView;
+@property (nonatomic, assign) CGFloat timeCount;
+@property (nonatomic, assign) CGFloat timeMargin;
+
+@property (nonatomic, strong) NSTimer *timer;
 @end
 
 @implementation LZBRecordVideoVC
@@ -39,6 +47,7 @@
     CGFloat height = [UIScreen mainScreen].bounds.size.height;
     self.topView.frame = CGRectMake(0, 0, width, 80);
     self.recordingButton.center = CGPointMake(width *0.5, height - self.recordingButton.bounds.size.height);
+    self.progressView.center = self.recordingButton.center;
     
     CGFloat margin =  (width - (self.topView.subviews.count *self.cameraButton.bounds.size.width))/self.topView.subviews.count;
     for (NSInteger i = 0; i < self.topView.subviews.count; i++)
@@ -50,6 +59,11 @@
         button.center = center;
     }
 }
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [self.videoTool stopCapture];
+    [self.videoTool stopRecordFunction];
+}
 
 
 - (void)setupSubView
@@ -59,7 +73,9 @@
     [self.topView addSubview:self.closeButton];
     [self.topView addSubview:self.flashButton];
     [self.topView addSubview:self.cameraButton];
+    [self.view addSubview:self.progressView];
     [self.view addSubview:self.recordingButton];
+   
 }
 
 - (void)setupCaptureSession
@@ -76,23 +92,78 @@
 #pragma mark- action
 - (void)closeButtonClick
 {
+    [self endRecordingVideo];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)flashButtonClick
+- (void)flashButtonClick:(UIButton *)flashButton
 {
-  
+    flashButton.selected = !flashButton.isSelected;
+    if(flashButton.selected)
+    {
+        [self.videoTool openFlashLight];
+    }
+    else
+        [self.videoTool closeFlashLight];
 }
 
-- (void)cameraButtonClick
+- (void)cameraButtonClick:(UIButton *)cameraButton
 {
-
+    cameraButton.selected = !cameraButton.isSelected;
+    if(cameraButton.selected)
+    {
+        [self.videoTool changeCameraInputDeviceisFront:YES];
+    }
+    else
+        [self.videoTool changeCameraInputDeviceisFront:NO];
 }
 
-- (void)recordingButtonClick
+- (void)startRecordingVideo
 {
-
+    [self startTimer];
+    [self.videoTool startCapture];
 }
+
+- (void)endRecordingVideo
+{
+    [self stopTimer];
+    [self.videoTool stopCapture];
+}
+
+#pragma mark - 定时器
+- (void)startTimer
+{
+    self.progressView.hidden = NO;
+    CGFloat signleTime = kVideoMaxTime/360;
+    self.timeCount = 0;
+    self.timeMargin = signleTime;
+    self.timer = [NSTimer  scheduledTimerWithTimeInterval:signleTime target:self selector:@selector(updateProgress) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+}
+
+- (void)stopTimer
+{
+    self.progressView.progress = 0;
+    //self.progressView.hidden = YES;
+    [self.timer invalidate];
+    self.timer = nil;
+}
+
+- (void)updateProgress
+{
+    if(self.timeCount >=kVideoMaxTime)
+    {
+        [self stopTimer];
+        [self endRecordingVideo];
+        return;
+    }
+    NSLog(@"======%lf",self.timeCount);
+    self.timeCount +=self.timeMargin;
+    CGFloat progress = self.timeCount/kVideoMaxTime;
+    self.progressView.progress = progress;
+}
+
+
 
 #pragma mark - lazy
 - (UIView *)topView
@@ -138,7 +209,7 @@
          _flashButton.bounds = CGRectMake(0, 0, 50, 50);
         _flashButton.layer.cornerRadius =  _flashButton.bounds.size.width * 0.5;
         _flashButton.layer.masksToBounds = YES;
-        [_flashButton addTarget:self action:@selector(flashButtonClick) forControlEvents:UIControlEventTouchUpInside];
+        [_flashButton addTarget:self action:@selector(flashButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _flashButton;
 }
@@ -152,7 +223,7 @@
         _cameraButton.bounds = CGRectMake(0, 0, 50, 50);
         _cameraButton.layer.cornerRadius =  _cameraButton.bounds.size.width * 0.5;
         _cameraButton.layer.masksToBounds = YES;
-        [_cameraButton addTarget:self action:@selector(cameraButtonClick) forControlEvents:UIControlEventTouchUpInside];
+        [_cameraButton addTarget:self action:@selector(cameraButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _cameraButton;
 }
@@ -166,7 +237,9 @@
         _recordingButton.bounds = CGRectMake(0, 0, 50, 50);
         _recordingButton.layer.cornerRadius =  _recordingButton.bounds.size.width * 0.5;
         _recordingButton.layer.masksToBounds = YES;
-        [_recordingButton addTarget:self action:@selector(recordingButtonClick) forControlEvents:UIControlEventTouchUpInside];
+        [_recordingButton addTarget:self action:@selector(startRecordingVideo) forControlEvents:UIControlEventTouchDown];
+        [_recordingButton addTarget:self action:@selector(endRecordingVideo) forControlEvents:UIControlEventTouchUpInside];
+        
     }
     return _recordingButton;
 }
@@ -178,6 +251,18 @@
       _videoTool = [[LZBRecordVideoTool alloc]init];
   }
     return _videoTool;
+}
+
+- (LZBRecordProcessView *)progressView
+{
+  if(_progressView == nil)
+  {
+      CGFloat widthHeight = self.recordingButton.bounds.size.width +2*lineWith;
+      _progressView = [[LZBRecordProcessView alloc]initWithCenter:CGPointMake(widthHeight *0.5, widthHeight*0.5) radius:(widthHeight-lineWith) *0.5];
+      _progressView.bounds =CGRectMake(0, 0, widthHeight, widthHeight);
+      _progressView.hidden = YES;
+  }
+    return _progressView;
 }
 
 

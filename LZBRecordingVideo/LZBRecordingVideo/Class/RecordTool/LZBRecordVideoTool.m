@@ -8,6 +8,7 @@
 
 #import "LZBRecordVideoTool.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <Photos/Photos.h>
 
 @interface LZBRecordVideoTool() <AVCaptureFileOutputRecordingDelegate>
 
@@ -39,11 +40,12 @@
 }
 
 //开始录制
-- (void) startCapture
+- (void)startCapture
 {
     if(self.captureMovieFileOutput.isRecording)
         return;
-    NSString *outputFielPath=[self.videoPath stringByAppendingString:@"myMovie.mov"];
+    NSString *defultPath = [self getVideoPathCache];
+    NSString *outputFielPath=[ defultPath stringByAppendingPathComponent:[self getVideoNameWithType:@"mp4"]];
     NSLog(@"save path is :%@",outputFielPath);
     NSURL *fileUrl=[NSURL fileURLWithPath:outputFielPath];
     [self.captureMovieFileOutput startRecordingToOutputFileURL:fileUrl recordingDelegate:self];
@@ -83,21 +85,70 @@
 
 }
 
+//切换前后置摄像头
+- (void)changeCameraInputDeviceisFront:(BOOL)isFront {
+    //改变会话的配置前一定要先开启配置，配置完成后提交配置改变
+    [self stopRecordFunction];
+    [self.captureSession beginConfiguration];
+    if (isFront) {
+        
+        [self.captureSession removeInput:self.backCameraInput];
+        if ([self.captureSession canAddInput:self.frontCameraInput]) {
+            //[self changeCameraAnimation];
+            [self.captureSession addInput:self.frontCameraInput];
+        }
+    }else {
+        [self.captureSession removeInput:self.frontCameraInput];
+        if ([self.captureSession canAddInput:self.backCameraInput]) {
+            //[self changeCameraAnimation];
+            [self.captureSession addInput:self.backCameraInput];
+        }
+    }
+    //提交会话配置
+    [self.captureSession commitConfiguration];
+    [self startRecordFunction];
+}
+
 #pragma mark - 视频输出代理
 -(void)captureOutput:(AVCaptureFileOutput *)captureOutput didStartRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections{
     NSLog(@"开始录制...");
 }
 -(void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error{
     NSLog(@"视频录制完成.");
-    //视频录入完成之后在后台将视频存储到相簿
-    ALAssetsLibrary *assetsLibrary=[[ALAssetsLibrary alloc]init];
-    [assetsLibrary writeVideoAtPathToSavedPhotosAlbum:outputFileURL completionBlock:^(NSURL *assetURL, NSError *error) {
+    //视频录入完成之后在后台将视频存储到相
+    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+        [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:outputFileURL];
+    } completionHandler:^(BOOL success, NSError * _Nullable error) {
         if (error) {
             NSLog(@"保存视频到相簿过程中发生错误，错误信息：%@",error.localizedDescription);
         }
         NSLog(@"成功保存视频到相簿.");
     }];
     
+}
+
+#pragma mark - 视频地址
+- (NSString *)getVideoPathCache
+{
+    NSString *videoCache = [NSTemporaryDirectory() stringByAppendingPathComponent:@"videos"] ;
+    BOOL isDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL existed = [fileManager fileExistsAtPath:videoCache isDirectory:&isDir];
+    if ( !(isDir == YES && existed == YES) ) {
+        [fileManager createDirectoryAtPath:videoCache withIntermediateDirectories:YES attributes:nil error:nil];
+    };
+    return videoCache;
+}
+- (NSString *)getVideoNameWithType:(NSString *)fileType
+{
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"HHmmss"];
+    NSDate * NowDate = [NSDate dateWithTimeIntervalSince1970:now];
+    ;
+    NSString * timeStr = [formatter stringFromDate:NowDate];
+    NSString *fileName = [NSString stringWithFormat:@"video_%@.%@",timeStr,fileType];
+    return fileName;
 }
 
 
