@@ -15,6 +15,7 @@
 		187115E21E62AAD600524A3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 187115E01E62AAD600524A3B /* LaunchScreen.storyboard */; };
 		187115ED1E62AAD600524A3B /* LZBRecordingVideoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 187115EC1E62AAD600524A3B /* LZBRecordingVideoTests.m */; };
 		187115F81E62AAD600524A3B /* LZBRecordingVideoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 187115F71E62AAD600524A3B /* LZBRecordingVideoUITests.m */; };
+		1871160A1E62AF4C00524A3B /* LZBRecordVideoTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 187116091E62AF4C00524A3B /* LZBRecordVideoTool.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,8 @@
 		187115F31E62AAD600524A3B /* LZBRecordingVideoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LZBRecordingVideoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		187115F71E62AAD600524A3B /* LZBRecordingVideoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LZBRecordingVideoUITests.m; sourceTree = "<group>"; };
 		187115F91E62AAD600524A3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		187116081E62AF4C00524A3B /* LZBRecordVideoTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZBRecordVideoTool.h; sourceTree = "<group>"; };
+		187116091E62AF4C00524A3B /* LZBRecordVideoTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LZBRecordVideoTool.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +104,7 @@
 		187115D11E62AAD600524A3B /* LZBRecordingVideo */ = {
 			isa = PBXGroup;
 			children = (
+				187116061E62AF0500524A3B /* Class */,
 				187115D51E62AAD600524A3B /* AppDelegate.h */,
 				187115D61E62AAD600524A3B /* AppDelegate.m */,
 				187115D81E62AAD600524A3B /* ViewController.h */,
@@ -138,6 +142,23 @@
 				187115F91E62AAD600524A3B /* Info.plist */,
 			);
 			path = LZBRecordingVideoUITests;
+			sourceTree = "<group>";
+		};
+		187116061E62AF0500524A3B /* Class */ = {
+			isa = PBXGroup;
+			children = (
+				187116071E62AF0500524A3B /* RecordTool */,
+			);
+			path = Class;
+			sourceTree = "<group>";
+		};
+		187116071E62AF0500524A3B /* RecordTool */ = {
+			isa = PBXGroup;
+			children = (
+				187116081E62AF4C00524A3B /* LZBRecordVideoTool.h */,
+				187116091E62AF4C00524A3B /* LZBRecordVideoTool.m */,
+			);
+			path = RecordTool;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -276,6 +297,7 @@
 				187115DA1E62AAD600524A3B /* ViewController.m in Sources */,
 				187115D71E62AAD600524A3B /* AppDelegate.m in Sources */,
 				187115D41E62AAD600524A3B /* main.m in Sources */,
+				1871160A1E62AF4C00524A3B /* LZBRecordVideoTool.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
