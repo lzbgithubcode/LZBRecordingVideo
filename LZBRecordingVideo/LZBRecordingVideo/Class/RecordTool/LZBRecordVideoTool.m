@@ -63,6 +63,9 @@
 //开启闪光灯
 - (void)openFlashLight
 {
+    //改变会话的配置前一定要先开启配置，配置完成后提交配置改变
+    //[self stopRecordFunction];
+    [self.captureSession beginConfiguration];
     AVCaptureDevice *backCamera = [self backCamera];
     if (backCamera.torchMode == AVCaptureTorchModeOff) {
         [backCamera lockForConfiguration:nil];
@@ -70,11 +73,17 @@
         backCamera.flashMode = AVCaptureFlashModeOn;
         [backCamera unlockForConfiguration];
     }
+    //提交会话配置
+    [self.captureSession commitConfiguration];
+    [self startRecordFunction];
 }
 
 //关闭闪光灯
 - (void)closeFlashLight
 {
+    //改变会话的配置前一定要先开启配置，配置完成后提交配置改变
+   // [self stopRecordFunction];
+    [self.captureSession beginConfiguration];
     AVCaptureDevice *backCamera = [self backCamera];
     if (backCamera.torchMode == AVCaptureTorchModeOn) {
         [backCamera lockForConfiguration:nil];
@@ -82,6 +91,9 @@
         backCamera.flashMode = AVCaptureTorchModeOff;
         [backCamera unlockForConfiguration];
     }
+    //提交会话配置
+    [self.captureSession commitConfiguration];
+    [self startRecordFunction];
 
 }
 
@@ -205,7 +217,7 @@
         NSError *error;
         _backCameraInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self backCamera] error:&error];
         if (error) {
-            NSLog(@"获取后置摄像头失败~");
+            NSLog(@"获取后置摄像头失败~%d",[self isAvailableWithCamera]);
         }
     }
     return _backCameraInput;
@@ -230,7 +242,8 @@
         NSError *error;
         _audioMicInput = [AVCaptureDeviceInput deviceInputWithDevice:mic error:&error];
         if (error) {
-            NSLog(@"获取麦克风失败~");
+            
+            NSLog(@"获取麦克风失败~%d",[self isAvailableWithMic]);
         }
     }
     return _audioMicInput;
@@ -280,4 +293,26 @@
     }
     return nil;
 }
+@end
+
+@implementation LZBRecordVideoTool(Authorization)
+
+- (BOOL)isAvailableWithCamera
+{
+    return [self isAvailableWithDeviveMediaType:AVMediaTypeVideo];
+}
+- (BOOL)isAvailableWithMic
+{
+    return [self isAvailableWithDeviveMediaType:AVMediaTypeAudio];
+}
+
+- (BOOL)isAvailableWithDeviveMediaType:(NSString *)mediaType
+{
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(status == ALAuthorizationStatusDenied||status == ALAuthorizationStatusRestricted)
+        return NO;
+    else
+        return YES;
+}
+
 @end

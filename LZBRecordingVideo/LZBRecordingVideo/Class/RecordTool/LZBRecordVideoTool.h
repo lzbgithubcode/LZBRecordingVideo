@@ -37,3 +37,16 @@
 //切换前后置摄像头
 - (void)changeCameraInputDeviceisFront:(BOOL)isFront;
 @end
+
+@interface LZBRecordVideoTool(Authorization)
+
+/**
+   相机是否可以用
+ */
+- (BOOL)isAvailableWithCamera;
+
+/**
+    麦克风是否可以用
+ */
+- (BOOL)isAvailableWithMic;
+@end
