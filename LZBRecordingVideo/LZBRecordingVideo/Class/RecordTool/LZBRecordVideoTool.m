@@ -48,6 +48,7 @@
     NSString *outputFielPath=[ defultPath stringByAppendingPathComponent:[self getVideoNameWithType:@"mp4"]];
     NSLog(@"save path is :%@",outputFielPath);
     NSURL *fileUrl=[NSURL fileURLWithPath:outputFielPath];
+    //设置录制视频流输出的路径
     [self.captureMovieFileOutput startRecordingToOutputFileURL:fileUrl recordingDelegate:self];
    
 }
